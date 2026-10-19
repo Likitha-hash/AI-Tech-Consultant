@@ -1,0 +1,8 @@
+SAMPLE ONLY - replace with your own role-played, recorded follow-up transcript.
+Consultant: Last time we agreed city and service-type search, a yearly plan, and the new welcome email.
+Maria: Right. Two changes. Forget the welcome email, my daughter will do it herself.
+Maria: And the search, I also want it to show a map with pins for every result.
+Consultant: The map is new work. It wasn't in the first quote.
+Maria: Fine, quote it separately. Also members should be able to upload photos of their work, up to ten each.
+Consultant: And the yearly plan stays?
+Maria: Yes, stays as it is. Same two months free.

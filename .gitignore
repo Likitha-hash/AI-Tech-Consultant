@@ -1,0 +1,10 @@
+.venv/
+.env
+node_modules/
+__pycache__/
+*.pyc
+task1_brain/data/
+task3_scope/data/
+task2_inbox/data/state.json
+task2_inbox/data/sim-state.json
+.pytest_cache/

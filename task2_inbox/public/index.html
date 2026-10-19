@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Inbox Agent</title>
+<style>
+body{font:15px/1.5 system-ui,sans-serif;margin:0;background:#fafafa;color:#1a1a1a}header{padding:10px 16px;background:#1a1a1a;color:#fff;display:flex;gap:12px;align-items:center}
+main{display:grid;grid-template-columns:300px 1fr 280px;gap:12px;padding:12px}@media(max-width:900px){main{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px;margin-bottom:8px}.item{cursor:pointer;padding:8px;border-bottom:1px solid #eee}.item:hover,.sel{background:#eef3ff}
+textarea,input{width:100%;box-sizing:border-box;padding:8px;font:inherit;border:1px solid #bbb;border-radius:6px}
+button{padding:7px 14px;background:#2f6fed;color:#fff;border:0;border-radius:6px;cursor:pointer;margin:4px 4px 4px 0}button.g{background:#666}button.ok{background:#1f8a4c}
+.tag{font-size:12px;padding:1px 8px;border-radius:10px;background:#eee;margin-right:4px}.hi{background:#fbd5d5}.auto{background:#d8f5e3}small{color:#666}</style></head><body>
+<header><b>Inbox Agent</b><button onclick="seed()">Load 5 sample emails</button><span id="spend"></span></header>
+<main><div><div class="card" id="list"></div><div class="card"><b>New email</b><input id="ns" placeholder="Subject"><textarea id="nb" rows="4" placeholder="Email text"></textarea><button onclick="add()">Add</button></div></div>
+<div id="detail"><div class="card">Pick an email on the left.</div></div>
+<div><div class="card"><b>Autopilot</b><div id="ap"></div></div><div class="card"><b>What the agent learned</b><div id="ls"></div></div><div class="card"><b>Quality by prompt version</b><div id="st"></div></div></div></main>
+<script>
+let S=null,sel=null;const $=i=>document.getElementById(i),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function load(){S=await (await fetch('/api/state')).json();render()}
+const post=(u,b)=>fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b||{})}).then(async r=>{if(!r.ok)alert((await r.json()).error);await load()});
+async function seed(){$('spend').textContent='Drafting...';await post('/api/seed?n=5');$('spend').textContent=''}
+async function add(){await post('/api/emails',{subject:$('ns').value,body:$('nb').value});$('ns').value=$('nb').value=''}
+function render(){$('spend').textContent='AI spend so far: $'+S.spend;
+ $('list').innerHTML=S.emails.slice().reverse().map(e=>{const r=S.records[e.id];return `<div class="item ${sel==e.id?'sel':''}" onclick="sel='${e.id}';render()"><b>${esc(e.subject)}</b><br><small>${esc(e.name)}</small>
+ <br><span class="tag">${r.triage.category}</span>${r.triage.risk=='high'?'<span class="tag hi">needs care</span>':''}<span class="tag ${r.status=='auto_sent'?'auto':''}">${r.status}</span>${r.audit?'<span class="tag hi">spot-check</span>':''}</div>`}).join('')||'No emails yet.';
+ const e=S.emails.find(x=>x.id==sel);if(e){const r=S.records[e.id];$('detail').innerHTML=`<div class="card"><b>${esc(e.subject)}</b><p style="white-space:pre-wrap">${esc(e.body)}</p></div>
+ <div class="card"><small>Agent says: ${r.brain.confident?'found the answer in the help center':'NOT sure about the facts'} - confidence ${r.draft.confidence}${r.draft.needs_human_reason?' - <b>'+esc(r.draft.needs_human_reason)+'</b>':''}</small>
+ <textarea id="fb" rows="12" ${r.status!='pending'&&!r.audit?'disabled':''}>${esc(r.finalBody??r.draft.body)}</textarea>
+ ${r.status=='pending'?`<button class="ok" onclick="done('send')">Send</button><button class="g" onclick="done('own_reply')">Send as my own reply</button>`:''}
+ ${r.audit?`<button class="ok" onclick="aud(true)">Looks right</button><button class="g" onclick="aud(false)">Wrong - fix it with the text above</button>`:''}
+ <br><small>Sources: ${r.brain.sources.map(u=>`<a href="${esc(u)}" target="_blank">link</a>`).join(' ')||'none'} - prompt ${r.promptVersion}${r.similarity!==undefined?' - similarity '+r.similarity:''}</small></div>`}
+ $('ap').innerHTML=Object.entries(S.autopilot).map(([c,a])=>`<div>${c}: ${a.enabled?'<b style="color:#1f8a4c">ON</b>':a.streak+'/'+S.streakNeeded}${a.reason?`<br><small>${esc(a.reason)}</small>`:''}</div>`).join('')||'<small>No data yet</small>';
+ $('ls').innerHTML=S.lessons.map(l=>`<div><label><input type="checkbox" style="width:auto" ${l.active?'checked':''} onchange="post('/api/lessons/${l.id}/toggle')"> <small>[${l.scope}]</small> ${esc(l.rule)}</label></div>`).join('')||'<small>Edit a draft and it will learn.</small>';
+ $('st').innerHTML=S.stats.map(s=>`<div><small>${s.version}: ${s.n} sent, ${Math.round(s.avgSimilarity*100)}% unchanged-ness, ${Math.round(s.unchangedRate*100)}% sent as is</small></div>`).join('')||'<small>No data yet</small>'}
+const done=a=>post(`/api/records/${sel}/resolve`,{action:a,finalBody:$('fb').value}),aud=ok=>post(`/api/records/${sel}/audit`,{ok,corrected:$('fb').value});
+load();
+</script></body></html>

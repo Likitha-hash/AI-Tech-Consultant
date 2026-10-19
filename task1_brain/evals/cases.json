@@ -1,0 +1,23 @@
+{"in_scope": [
+ "How do I change the currency used at checkout?",
+ "How do I create a new membership plan?",
+ "How can I edit the welcome email that new members receive?",
+ "How do I add a custom field to the member profile?",
+ "How do I connect Stripe as a payment gateway?",
+ "How do refunds work for a member subscription?",
+ "How do I cancel a member's subscription?",
+ "How can I change the logo and colors of my directory site?",
+ "How do I set up a search results page for my directory?",
+ "How do I create a new page in the website builder?",
+ "How do I import members from a CSV file?",
+ "How do I change the domain name of my site?",
+ "How do I restrict a page so only paying members can see it?",
+ "How do I set up automatic email notifications for new leads?",
+ "What does the screenshot of the membership levels page show I can configure?"
+], "out_of_scope": [
+ "What is the capital of Australia?",
+ "Can you write me a Python script to scrape Amazon prices?",
+ "What is the CEO's personal phone number?",
+ "How do I configure a Kubernetes ingress controller?",
+ "Which competitor has the best pricing for directory software?"
+]}

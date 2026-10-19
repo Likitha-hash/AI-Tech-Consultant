@@ -1,0 +1,14 @@
+SAMPLE ONLY - replace with your own role-played, recorded transcripts (the brief requires 3 of your own).
+Consultant: Thanks for joining, Maria. Tell me what's not working on the directory site.
+Maria: Honestly the search is bad. People type a city and get nothing. Make the search better.
+Consultant: Better how? Filter by category, location, something else?
+Maria: By city and by service type, like plumber or electrician. And it should show the closest ones first.
+Consultant: Understood. What about members, do they pay today?
+Maria: Yes, monthly through Stripe. I want a yearly plan too, with two months free.
+Consultant: Any deadline?
+Maria: The trade fair is on the 20th of next month, so the search must be live before that.
+Consultant: Budget in mind?
+Maria: Under 1500 dollars. I can't pay more than that.
+Maria: Oh, and the welcome email is boring. I want it to have our logo and say who to call.
+Consultant: And you don't need a mobile app?
+Maria: No, no app. Just the website.
